@@ -62,25 +62,25 @@ export const constantRoutes = [
       path: 'dashboard',
       name: '首页',
       component: () => import('@/views/dashboard/index'),
-      meta: { 
-        title: '首页', 
-        icon: 'dashboard' 
+      meta: {
+        title: '首页',
+        icon: 'dashboard'
       }
     }]
   },
 ]
 
-/* 
+/*
 必须最后才注册的路由
 用于处理当请求路径没有一个匹配时, 自动跳转到404路由界面
 */
-export const lastRoute = { 
-  path: '*', 
-  redirect: '/404', 
-  hidden: true 
+export const lastRoute = {
+  path: '*',
+  redirect: '/404',
+  hidden: true
 }
 
-/* 
+/*
 用于创建只注册常量路由的路由器的函数
 */
 const createRouter = () => new Router({
@@ -99,7 +99,7 @@ export function resetRouter() {
   const newRouter = createRouter()
 
   // 重置路由器的matcher(只包含常量路由)
-  router.matcher = newRouter.matcher 
+  router.matcher = newRouter.matcher
 }
 
 // 向外暴露路由器
