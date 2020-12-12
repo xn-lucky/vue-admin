@@ -27,7 +27,7 @@
             type="warning"
             icon="el-icon-edit"
             class="handle-btn"
-            @click="updTradeMark(scope.row.id)"
+            @click="updTradeMark(scope.row)"
             >修改</el-button
           >
           <el-button
@@ -116,7 +116,6 @@ export default {
       isPlus: false,
       trademarkForm: {
         // 保存添加对话框中的form数据
-        id: "", // 要保存下id 删除和修改时要用
         tmName: "",
         logoUrl: "",
       },
@@ -170,8 +169,9 @@ export default {
     addTradeMark() {
       // console.log(this.trademarkForm);
       // 点击添加时，清空之前写的数据
-      this.trademarkForm.tmName = "";
-      this.trademarkForm.logoUrl = "";
+      // this.trademarkForm.tmName = "";
+      // this.trademarkForm.logoUrl = "";
+      this.trademarkForm = {};
       // 使用dialog弹框,点击添加 visibleDialog为true 显示弹框
       this.visibleDialog = true;
       this.isPlus = true; // 此时是添加
@@ -203,6 +203,7 @@ export default {
       this.$refs[trademarkForm].validate(async (valid) => {
         // console.log("valid", valid);
         if (valid) {
+          // 这边进行判断也是可以通过trademarkForm.id来判断的,因为修改数据才会有id
           if (this.isPlus) {
             // 增加品牌请求
             await this.$API.trademark.addTradeMark(this.trademarkForm);
@@ -216,8 +217,8 @@ export default {
         }
       });
     },
-    // 点击修改按钮 对品牌数据进行修改
-    async updTradeMark(id) {
+    // (方法一,获取id发了请求)点击修改按钮 对品牌数据进行修改
+    /*  async updTradeMark(id) {
       // console.log(id);
       // 使用dialog弹框,点击添加 visibleDialog为true 显示弹框
       this.visibleDialog = true;
@@ -232,6 +233,16 @@ export default {
         this.trademarkForm.tmName = result.data.tmName;
         this.trademarkForm.id = result.data.id;
       }
+    }, */
+    // (方法二:直接传过来row,获取每行数据,row中含有id 可以直接获取)点击修改按钮 对品牌数据进行修改
+    async updTradeMark(row) {
+      // console.log(id);
+      // 使用dialog弹框,点击添加 visibleDialog为true 显示弹框
+      this.visibleDialog = true;
+      this.isPlus = false; // 此时是修改
+
+      // 修改时，要获取此时你点击的行的数据,显示在页面上
+      this.trademarkForm = { ...row };
     },
     // 删除当前数据
     delTradeMark(id, tmName) {
@@ -242,7 +253,11 @@ export default {
       })
         .then(async () => {
           // 确认删除后,调用删除请求
-          await this.$API.trademark.updTradeMark(id);
+          await this.$API.trademark.delTradeMark(id);
+          this.$message({
+            type: "info",
+            message: "删除成功",
+          });
           // 删除数据后 更新数据
           this.getTradeList();
         })

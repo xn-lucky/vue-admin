@@ -35,7 +35,7 @@ export default {
     })
   },
   /*
-   添加品牌数据 PUT /admin/product/baseTrademark/update
+   修改品牌数据 PUT /admin/product/baseTrademark/update
   */
   updTradeMark(data) {
     return request({
@@ -47,7 +47,7 @@ export default {
   /*
    删除品牌数据  /admin/product/baseTrademark/remove/{id}
   */
-  updTradeMark(id) {
+  delTradeMark(id) {
     return request({
       method: 'DELETE',
       url: `${api_name}/remove/${id}`,
