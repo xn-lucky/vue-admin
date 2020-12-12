@@ -171,6 +171,8 @@ export default {
       // 点击添加时，清空之前写的数据
       // this.trademarkForm.tmName = "";
       // this.trademarkForm.logoUrl = "";
+      // 清空表单校验 因为第一次点击的时候dialog还没有创建，此时trademarkForm是undefined
+      this.$refs.trademarkForm && this.$refs.trademarkForm.clearValidate();
       this.trademarkForm = {};
       // 使用dialog弹框,点击添加 visibleDialog为true 显示弹框
       this.visibleDialog = true;
@@ -203,15 +205,29 @@ export default {
       this.$refs[trademarkForm].validate(async (valid) => {
         // console.log("valid", valid);
         if (valid) {
+          this.visibleDialog = false;
           // 这边进行判断也是可以通过trademarkForm.id来判断的,因为修改数据才会有id
           if (this.isPlus) {
             // 增加品牌请求
             await this.$API.trademark.addTradeMark(this.trademarkForm);
           } else {
+            // 如果是修改, 要判断是否有修改数据,有的话在提交修改请求,否则不修改
+            // 1- 找到你要修改的数据(在tradeList中通过id),在与trademarkForm中的表单数据进行比较
+            const tm = this.tradeList.find(
+              (tm) => tm.id === this.trademarkForm.id
+            );
+            if (
+              tm.tmName === this.trademarkForm.tmName &&
+              tm.logoUrl === this.trademarkForm.logoUrl
+            ) {
+              // 说明没有修改
+              this.$message("未修改数据,请修改后提交~");
+              return;
+            }
             // 发送修改数据请求
             await this.$API.trademark.updTradeMark(this.trademarkForm);
           }
-          this.visibleDialog = false;
+
           // 此时增加完数据希望重新请求下数据
           this.getTradeList();
         }
@@ -237,6 +253,8 @@ export default {
     // (方法二:直接传过来row,获取每行数据,row中含有id 可以直接获取)点击修改按钮 对品牌数据进行修改
     async updTradeMark(row) {
       // console.log(id);
+      // 清空表单校验 因为第一次点击的时候dialog还没有创建，此时trademarkForm是undefined
+      this.$refs.trademarkForm && this.$refs.trademarkForm.clearValidate();
       // 使用dialog弹框,点击添加 visibleDialog为true 显示弹框
       this.visibleDialog = true;
       this.isPlus = false; // 此时是修改
