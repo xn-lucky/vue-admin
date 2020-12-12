@@ -173,7 +173,11 @@ export default {
       // this.trademarkForm.logoUrl = "";
       // 清空表单校验 因为第一次点击的时候dialog还没有创建，此时trademarkForm是undefined
       this.$refs.trademarkForm && this.$refs.trademarkForm.clearValidate();
-      this.trademarkForm = {};
+      // 不能直接使用 this.trademarkForm ={},因为后面添加数据时就不是响应式的了
+      this.trademarkForm = {
+        tmName: "",
+        logoUrl: "",
+      };
       // 使用dialog弹框,点击添加 visibleDialog为true 显示弹框
       this.visibleDialog = true;
       this.isPlus = true; // 此时是添加
