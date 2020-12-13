@@ -47,5 +47,40 @@ export default {
       url: `${BASE_URL}/attrInfoList/${category1Id}/${category2Id}/${category3Id}`
     }) */
     return request.get(`${BASE_URL}/attrInfoList/${category1Id}/${category2Id}/${category3Id}`)
+  },
+
+  /*
+获取属性的属性值列表（暂时没有用）
+*/
+  getAttrValueList(attrId) {
+    /*  return request({
+       url: `${BASE_URL}/getAttrValueList/${attrId}`,
+       method: "GET"
+     }); */
+    return request.get(`${BASE_URL}/getAttrValueList/${attrId}`)
+
+  },
+
+  /*
+    增加（保存）属性 POST /admin/product/saveAttrInfo
+  */
+  saveAttrInfo(attr) {
+    return request({
+      method: 'POST',
+      url: `${BASE_URL}/saveAttrInfo`,
+      data: attr
+    })
+
+    // return request.post(`${BASE_URL}/saveAttrInfo`, { data: attr })
+  },
+
+  /*
+    删除属性 DELETE /admin/product/deleteAttr/{attrId}
+  */
+  getDeleteAttr(attrId) {
+    return request({
+      method: 'DELETE',
+      url: `${BASE_URL}/deleteAttr/${attrId}`
+    })
   }
 }
