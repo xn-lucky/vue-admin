@@ -88,6 +88,8 @@ export default {
       this.$emit("change-attrShow", true);
       // 发送请求
       this.publicGetCategory(id, value);
+      // 一级二级分类改变要清空属性数据
+      this.$emit("clearAttrsList");
     },
     async category3IdChange() {
       // 三级分类改变发送请求所有的属性数据

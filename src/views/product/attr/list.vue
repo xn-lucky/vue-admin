@@ -11,6 +11,7 @@
     <Category
       @change-attrShow="updIsAttrShow"
       @change="getAttrsInfoList"
+      @clearAttrsList="clearAttrsList"
       :isShow="!isShow"
     />
     <el-card v-show="isShow">
@@ -46,18 +47,25 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150">
-          <template v-slot="{ row }">
+          <template v-slot="{ row, $index }">
             <el-button
               type="warning"
               icon="el-icon-edit"
               class="handle-btn"
               @click="updAttr(row)"
             ></el-button>
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              class="handle-btn"
-            ></el-button>
+
+            <el-popconfirm
+              :title="`确认删除' ${row.attrName} ' 吗？`"
+              @onConfirm="delAttrValueList(row, $index)"
+            >
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                class="handle-btn"
+                slot="reference"
+              ></el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -76,6 +84,7 @@
         icon="el-icon-plus"
         class="add-btn"
         @click="addAttrValue"
+        :disabled="!attrValue.attrName"
         >添加属性值</el-button
       >
       <!-- 表格 -->
@@ -90,11 +99,12 @@
         </el-table-column>
 
         <el-table-column prop="valueName" label="属性值名称">
-          <template v-slot="{ row }">
+          <template v-slot="{ row, $index }">
+            <!--   @blur="inputValue(row, $index)" -->
             <el-input
               v-if="row.edit"
               v-model="row.valueName"
-              @blur="row.edit = false"
+              @blur="inputValue(row, $index)"
               @keyup.enter.native="row.edit = false"
               autofocus
               size="mini"
@@ -142,8 +152,9 @@ export default {
       isAttrShow: true, // 添加属性按钮是否可按
       loading: false, // 是否正在请求中
       isShow: true,
-      // 保存修改时的分类的属性列表
+      // 保存修改/添加时的分类的属性列表
       attrValue: {
+        attrName: "",
         attrValueList: [],
       },
       isInput: false, // 是否显示输入框
@@ -153,6 +164,15 @@ export default {
     Category,
   },
   methods: {
+    async delAttrValueList(row, index) {
+      // console.log("attrsList", this.attrsList);
+      // console.log("delete", row.id, index);
+      // 删除此属性，通过id
+      await this.$API.category.deleteAttr(row.id);
+      // 手动更新数据，或者发送请求获取
+      // 发送请求获取属性数据
+      this.getAttrsInfoList(this.category);
+    },
     async getAttrsInfoList(category) {
       this.loading = true;
       this.category = category;
@@ -164,9 +184,10 @@ export default {
       }
       this.loading = false;
     },
-    /*   getAttrsList(attrList) {
-      this.attrsList = attrList;
-    }, */
+    // 清空数据
+    clearAttrsList() {
+      this.attrsList = [];
+    },
     updIsAttrShow(isAttrShow) {
       this.isAttrShow = isAttrShow;
     },
@@ -177,7 +198,10 @@ export default {
       this.isShow = false;
       // 每次点击的时候，清楚之前的内容
       this.attrValue = {
+        attrName: "",
         attrValueList: [],
+        categoryId: this.category.category3Id,
+        categoryLevel: 3,
       };
     },
     // 点击修改按钮 修改属性页面显示并且获取当前行的数据
@@ -213,9 +237,17 @@ export default {
         this.$refs.input.focus();
       });
     },
+    inputValue(row, index) {
+      row.edit = false;
+      if (!row.valueName) {
+        this.attrValue.attrValueList.splice(index, 1);
+      }
+    },
     // 保存按钮
     async save() {
-      // debugger;
+      debugger;
+      console.log(this.attrValue);
+      // return;
       // 获取所有数据 ,发送请求
       const result = await this.$API.category.saveAttrInfo(this.attrValue);
       if (result.code === 200) {

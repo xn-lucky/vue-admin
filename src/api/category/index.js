@@ -77,7 +77,7 @@ export default {
   /*
     删除属性 DELETE /admin/product/deleteAttr/{attrId}
   */
-  getDeleteAttr(attrId) {
+  deleteAttr(attrId) {
     return request({
       method: 'DELETE',
       url: `${BASE_URL}/deleteAttr/${attrId}`
