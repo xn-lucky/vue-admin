@@ -299,10 +299,7 @@ export default {
 <style lang="sass">
 .table
   margin: 20px 0
-.pagination
-  text-align: right
-.el-pagination__sizes
-  margin-left: 382px
+
 .handle-btn
   width: 73px
   height: 28px

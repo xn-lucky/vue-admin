@@ -8,12 +8,13 @@
       @change="getAttrsInfoList"
       :isShow="!isShow"
     /> -->
-    <Category
+    <!-- <Category
       @change-attrShow="updIsAttrShow"
       @change="getAttrsInfoList"
       @clearAttrsList="clearAttrsList"
       :isShow="!isShow"
-    />
+    /> -->
+    <Category @change-attrShow="updIsAttrShow" :isShow="!isShow" />
     <el-card v-show="isShow">
       <el-button
         type="primary"
@@ -142,7 +143,7 @@
 </template>
 
 <script>
-import Category from "./category";
+import Category from "@/components/Category/category";
 
 export default {
   name: "AttrList",
@@ -245,7 +246,6 @@ export default {
     },
     // 保存按钮
     async save() {
-      debugger;
       console.log(this.attrValue);
       // return;
       // 获取所有数据 ,发送请求
@@ -259,6 +259,20 @@ export default {
       }
     },
   },
+  mounted() {
+    /*
+       @change="getAttrsInfoList"
+       @clearAttrsList="clearAttrsList"
+    */
+    // 绑定事件
+    this.$bus.$on("change", this.getAttrsInfoList);
+    this.$bus.$on("clearAttrsList", this.clearAttrsList);
+  },
+  beforeDestroy() {
+    // 全局事件总线, 一定要做收尾工作,否则会出现绑定多个相同事件
+    this.$bus.$off("change", this.getAttrsInfoList);
+    this.$bus.$off("clearAttrsList", this.clearAttrsList);
+  },
 };
 </script>
 <style lang="sass">
@@ -267,8 +281,6 @@ export default {
   height: 28px
   font-size: 13px
   padding: 0
-.tag
-  margin-right: 10px
 .add-btn
   margin: 20px 0
 </style>
