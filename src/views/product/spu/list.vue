@@ -8,6 +8,7 @@
       v-else
       @updShowSpuList="updShowSpuList"
       :spu="item"
+      :isAdd="isAdd"
       @updShowList="updShowList"
     />
   </div>
@@ -24,6 +25,7 @@ export default {
     return {
       isShowSpuList: true, // 用于判断展示spu列表还是添加的页面
       item: {}, // SpuShowList传给SpuAddForm组件的数据(当前修改的行数据)
+      isAdd: false,
     };
   },
   components: {
@@ -32,11 +34,14 @@ export default {
     SpuAddForm,
   },
   methods: {
-    updShowSpuList(flag, row) {
+    updShowSpuList(flag, row, isAdd) {
       this.isShowSpuList = flag;
 
       // 浅复制 防止修改原数据
       this.item = { ...row };
+      if (isAdd) {
+        this.isAdd = isAdd;
+      }
     },
     updShowList(category3Id) {
       this.isShowSpuList = true;

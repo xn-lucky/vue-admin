@@ -3,7 +3,7 @@
     <el-button
       type="primary"
       icon="el-icon-plus"
-      @click="$emit('updShowSpuList', false)"
+      @click="$emit('updShowSpuList', false, category, true)"
       :disabled="!this.category.category3Id"
       >添加SPU</el-button
     >

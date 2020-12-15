@@ -189,6 +189,7 @@ export default {
   },
   props: {
     spu: Object,
+    isAdd: Boolean,
     /*
           category3Id: 1007
           description: "生活包~"
@@ -249,7 +250,13 @@ export default {
             spuSaleAttrList: this.spuSaleAttrsList,
           };
           // 3- 发送请求进行保存
-          const result = await this.$API.spu.updateSpuInfo(options);
+          let result;
+          if (this.isAdd) {
+            result = await this.$API.spu.saveSpuInfo(options);
+          } else {
+            result = await this.$API.spu.updateSpuInfo(options);
+          }
+
           // console.log(result);
           // 4- 保存成功后跳转页面并重新查询数据
           if (result.code === 200) {
@@ -394,10 +401,13 @@ export default {
     this.getTrademarkList();
     // 2- 获取销售属性
     this.getBaseSaleAttrList();
-    // 3- 图片列表
-    this.getSpuImageList();
-    // 4- spu属性
-    this.getSpuSaleAttrList();
+    // 如果是增加的话，这些就不用发送请求
+    if (!this.isAdd) {
+      // 3- 图片列表
+      this.getSpuImageList();
+      // 4- spu属性
+      this.getSpuSaleAttrList();
+    }
   },
 };
 </script>
