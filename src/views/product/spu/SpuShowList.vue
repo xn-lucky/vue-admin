@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card style="margin-top: 20px">
     <el-button
       type="primary"
       icon="el-icon-plus"
@@ -8,7 +8,13 @@
       >添加SPU</el-button
     >
     <!-- 表格 -->
-    <el-table :data="spuList" border style="width: 100%" class="table">
+    <el-table
+      :data="spuList"
+      border
+      style="width: 100%"
+      class="table"
+      v-loading="loading"
+    >
       <!-- type='index' 是写序号从1开始 -->
       <el-table-column type="index" label="序号" width="80" align="center">
       </el-table-column>
@@ -80,10 +86,12 @@ export default {
         category2Id: "",
         category3Id: "",
       },
+      loading: false, // 是否正在发送请求
     };
   },
   methods: {
     async getSpuInfoList(category) {
+      this.loading = true;
       // category是Category传过来的参数
       this.category = category;
       // 若三级分类改变,则发送请求获取对应数据
@@ -99,6 +107,7 @@ export default {
         this.limit = result.data.size;
         this.total = result.data.total;
       }
+      this.loading = false;
     },
     clearAttrsList() {
       this.spuList = [];

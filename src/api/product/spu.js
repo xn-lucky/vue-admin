@@ -57,5 +57,27 @@ GET /admin/product/spuSaleAttrList/{spuId}
       url: `${BASE_URL}/spuSaleAttrList/${spuId}`
     })
   },
+  /*
+  保存(修改)spu
+POST /admin/product/updateSpuInfo
+*/
+  updateSpuInfo(data) {
+    return request({
+      method: 'POST',
+      url: `${BASE_URL}/updateSpuInfo/`,
+      data
+    })
+  },
+  /*
+  增加spu
+POST /admin/product/saveSpuInfo
+*/
+  saveSpuInfo(data) {
+    return request({
+      method: 'POST',
+      url: `${BASE_URL}/saveSpuInfo`,
+      data
+    })
+  },
 
 }

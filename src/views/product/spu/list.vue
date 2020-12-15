@@ -1,10 +1,15 @@
 <template>
   <div>
-    <Category />
+    <Category :isShow="!isShowSpuList" />
     <!-- spu列表 -->
     <SpuShowList v-if="isShowSpuList" @updShowSpuList="updShowSpuList" />
     <!-- spu添加的页面 -->
-    <SpuAddForm v-else @updShowSpuList="updShowSpuList" :spu="item" />
+    <SpuAddForm
+      v-else
+      @updShowSpuList="updShowSpuList"
+      :spu="item"
+      @updShowList="updShowList"
+    />
   </div>
 </template>
 
@@ -29,10 +34,16 @@ export default {
   methods: {
     updShowSpuList(flag, row) {
       this.isShowSpuList = flag;
-      if (row) {
-        // 浅复制 防止修改原数据
-        this.item = { ...row };
-      }
+
+      // 浅复制 防止修改原数据
+      this.item = { ...row };
+    },
+    updShowList(category3Id) {
+      this.isShowSpuList = true;
+      // 等组件渲染完成就发送请求
+      this.$nextTick(() => {
+        this.$bus.$emit("change", { category3Id });
+      });
     },
   },
 };
