@@ -79,5 +79,15 @@ POST /admin/product/saveSpuInfo
       data
     })
   },
+  /*
+  删除spu
+DELETE /admin/product/deleteSpu/{spuId}
+*/
+  deleteSpu(spuId) {
+    return request({
+      method: 'DELETE',
+      url: `${BASE_URL}/deleteSpu/${spuId}`,
+    })
+  },
 
 }

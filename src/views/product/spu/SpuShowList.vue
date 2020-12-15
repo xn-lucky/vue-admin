@@ -39,7 +39,10 @@
             class="handle-btn"
           ></el-button>
 
-          <el-popconfirm :title="`确认删除 吗？`">
+          <el-popconfirm
+            :title="`确认删除 '${row.spuName}'  吗？`"
+            @onConfirm="delSpu(row.id)"
+          >
             <el-button
               type="danger"
               icon="el-icon-delete"
@@ -90,6 +93,15 @@ export default {
     };
   },
   methods: {
+    // 删除Spu
+    async delSpu(spuId) {
+      const result = await this.$API.spu.deleteSpu(spuId);
+      if (result.code === 200) {
+        this.getSpuInfoList(this.category);
+      } else {
+        this.$message.error(result.message);
+      }
+    },
     async getSpuInfoList(category) {
       this.loading = true;
       // category是Category传过来的参数
