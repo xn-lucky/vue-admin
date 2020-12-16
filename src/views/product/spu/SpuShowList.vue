@@ -22,21 +22,24 @@
       <el-table-column prop="description" label="SPU描述"> </el-table-column>
       <el-table-column label="操作">
         <template v-slot="{ row }">
+          <!-- 将category信息传过去和当前行的spu名称等数据 -->
           <el-button
             type="primary"
             icon="el-icon-plus"
             class="handle-btn"
+            @click="$emit('updIsShowSku', { ...row, ...category })"
           ></el-button>
           <el-button
             type="primary"
             icon="el-icon-edit"
             class="handle-btn"
-            @click="$emit('updShowSpuList', false, row)"
+            @click="$emit('updShowSpuList', false, row, false)"
           ></el-button>
           <el-button
             type="info"
             icon="el-icon-info"
             class="handle-btn"
+            @click="findBySpuId(row)"
           ></el-button>
 
           <el-popconfirm
@@ -67,6 +70,24 @@
       :total="total"
     >
     </el-pagination>
+
+    <!-- spu的Sku详情 -->
+    <el-dialog :title="`${spuName} => SKU列表`" :visible.sync="isSkuListInfo">
+      <el-table :data="spuSkuList">
+        <el-table-column
+          prop="skuName"
+          label="名称"
+          width="150"
+        ></el-table-column>
+        <el-table-column prop="price" label="价格(元)"></el-table-column>
+        <el-table-column prop="weight" label="重量(千克)"></el-table-column>
+        <el-table-column label="默认图片">
+          <template v-slot="{ row }">
+            <img :src="row.skuDefaultImg" alt="" style="width: 100px" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -90,9 +111,26 @@ export default {
         category3Id: "",
       },
       loading: false, // 是否正在发送请求
+      isSkuListInfo: false,
+      spuSkuList: [], // 某spu下的sku列表
+      spuName: "", //保存当前spu的名称
     };
   },
   methods: {
+    // 点击获取spu下的sku列表
+    async findBySpuId(row) {
+      this.isSkuListInfo = true;
+      this.spuName = row.spuName;
+      // 获取sku列表
+      // console.log(row);
+      // 发送请求
+      const result = await this.$API.sku.findBySpuId(row.id);
+      if (result.code === 200) {
+        this.spuSkuList = result.data;
+      } else {
+        this.$message.error(result.message);
+      }
+    },
     // 删除Spu
     async delSpu(spuId) {
       const result = await this.$API.spu.deleteSpu(spuId);
