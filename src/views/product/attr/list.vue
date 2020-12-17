@@ -14,7 +14,7 @@
       @clearAttrsList="clearAttrsList"
       :isShow="!isShow"
     /> -->
-    <Category @change-attrShow="updIsAttrShow" :isShow="!isShow" />
+    <Category :isShow="!isShow" />
     <el-card v-show="isShow">
       <el-button
         type="primary"
@@ -144,6 +144,7 @@
 
 <script>
 import Category from "@/components/Category/category";
+import { mapState } from "vuex";
 
 export default {
   name: "AttrList",
@@ -161,6 +162,35 @@ export default {
       isInput: false, // 是否显示输入框
     };
   },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
+  watch: {
+    // 监视三个分类id,可以监视对象中的属性
+    "category.category3Id"(category3Id) {
+      if (!category3Id) return;
+      // 三级Id有值 就发送请求数据
+      this.getAttrsInfoList();
+      // 添加属性按钮显示可按
+      this.updIsAttrShow(false);
+    },
+    "category.category2Id"(category2Id) {
+      if (!category2Id) return;
+      // 清空属性列表数据
+      this.clearAttrsList();
+      // 添加属性按钮显示可按
+      this.updIsAttrShow(true);
+    },
+    "category.category1Id"(category1Id) {
+      if (!category1Id) return;
+      // 清空属性列表数据
+      this.clearAttrsList();
+      // 添加属性按钮显示可按
+      this.updIsAttrShow(true);
+    },
+  },
   components: {
     Category,
   },
@@ -174,14 +204,15 @@ export default {
       // 发送请求获取属性数据
       this.getAttrsInfoList(this.category);
     },
-    async getAttrsInfoList(category) {
+    async getAttrsInfoList() {
       this.loading = true;
-      this.category = category;
-      const result = await this.$API.category.getAttrInfoList(category);
+      // this.category = category;
+      const result = await this.$API.category.getAttrInfoList(this.category);
       if (result.code === 200) {
         this.attrsList = result.data;
+        this.$message.success("获取属性数据成功");
       } else {
-        this.$message.error("出错了1~~~");
+        this.$message.error(result.message);
       }
       this.loading = false;
     },
@@ -265,13 +296,13 @@ export default {
        @clearAttrsList="clearAttrsList"
     */
     // 绑定事件
-    this.$bus.$on("change", this.getAttrsInfoList);
-    this.$bus.$on("clearAttrsList", this.clearAttrsList);
+    // this.$bus.$on("change", this.getAttrsInfoList);
+    // this.$bus.$on("clearAttrsList", this.clearAttrsList);
   },
   beforeDestroy() {
     // 全局事件总线, 一定要做收尾工作,否则会出现绑定多个相同事件
-    this.$bus.$off("change", this.getAttrsInfoList);
-    this.$bus.$off("clearAttrsList", this.clearAttrsList);
+    // this.$bus.$off("change", this.getAttrsInfoList);
+    // this.$bus.$off("clearAttrsList", this.clearAttrsList);
   },
 };
 </script>

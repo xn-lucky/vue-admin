@@ -7,11 +7,11 @@
         <el-select
           v-model="category.category1Id"
           placeholder="请选择"
-          @change="categoryIdChange(2, $event)"
+          @change="category1IdChange"
           :disabled="isShow"
         >
           <el-option
-            v-for="item1Id in category.category1List"
+            v-for="item1Id in category1List"
             :key="item1Id.id"
             :label="item1Id.name"
             :value="item1Id.id"
@@ -23,11 +23,11 @@
         <el-select
           v-model="category.category2Id"
           placeholder="请选择"
-          @change="categoryIdChange(3, $event)"
+          @change="category2IdChange"
           :disabled="isShow"
         >
           <el-option
-            v-for="item2Id in category.category2List"
+            v-for="item2Id in category2List"
             :key="item2Id.id"
             :label="item2Id.name"
             :value="item2Id.id"
@@ -42,7 +42,7 @@
           :disabled="isShow"
         >
           <el-option
-            v-for="item3Id in category.category3List"
+            v-for="item3Id in category3List"
             :key="item3Id.id"
             :label="item3Id.name"
             :value="item3Id.id"
@@ -54,14 +54,13 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapMutations } from "vuex";
+
 export default {
   name: "Category",
   data() {
     return {
       category: {
-        category1List: [],
-        category2List: [],
-        category3List: [],
         category1Id: "",
         category2Id: "",
         category3Id: "",
@@ -69,81 +68,42 @@ export default {
     };
   },
   props: ["isShow"],
+  computed: {
+    ...mapState({
+      category1List: (state) => state.category.category1List,
+      category2List: (state) => state.category.category2List,
+      category3List: (state) => state.category.category3List,
+    }),
+  },
   methods: {
-    categoryIdChange(id, value) {
-      // console.log(id, value); // 1,2
-      // id为2 说明是一级分类，但是请求的是2级分类 value是选中的一级分类的category1Id
-
-      // 一级分类改变要清空二级分类和三级分类的值 // 二级分类改变要清空三级分类的值
-      this.category[`category${id}Id`] = "";
-      this.category[`category${id}List`] = "";
-      if (id === 2) {
-        this.category[`category${id + 1}Id`] = "";
-        this.category[`category${id + 1}List`] = "";
-      }
-
-      // 一级分类/二级分类改变 也要将table中的数据清空
-      // this.$emit("change-category", []);
-      // 一级分类和二级分类一修改，属性按钮就变灰
-      this.$emit("change-attrShow", true);
-      // 发送请求
-      this.publicGetCategory(id, value);
-      // 一级二级分类改变要清空属性数据
-      this.$bus.$emit("clearAttrsList");
+    ...mapActions([
+      "category/getCategory1List",
+      "category/getCategory2List",
+      "category/getCategory3List",
+    ]),
+    ...mapMutations(["category/SET_CATEGORY3_ID"]),
+    category1IdChange(category1Id) {
+      // 1- 清空category2Id，category3Id
+      this.category.category2Id = "";
+      this.category.category3Id = "";
+      // 2- 一级分类改变,发送请求二级分类
+      this["category/getCategory2List"](category1Id);
     },
-    async category3IdChange() {
-      // 三级分类改变发送请求所有的属性数据
-      const { category1Id, category2Id, category3Id } = this.category;
-      if (!category1Id || !category2Id || !category3Id) {
-        return;
-      }
-      // 发送请求
-      // this.loading = true;
-      // this.$emit("change-load", true);
-      // // 请求数据
-      // // await this.publicGetCategory(null, {
-      // //   category1Id,
-      // //   category2Id,
-      // //   category3Id,
-      // // });
-      // this.$emit("change-load", false);
-      // 触发添加属性按钮显示
-      this.$emit("change-attrShow", false);
-      // debugger;
-      // 触发父组件函数，获取全部数据
-      this.$bus.$emit("change", {
-        category1Id,
-        category2Id,
-        category3Id,
-      });
+    category2IdChange(category2Id) {
+      // 1- 清空category3Id
+      this.category.category3Id = "";
+      // 2- 二级分类改变,发送请求三级分类
+      this["category/getCategory3List"](category2Id);
     },
-    // 公共代码
-    async publicGetCategory(id, value) {
-      let result = await this.$API.category[`getCategorys${id}`](value);
-      /* if (!id) {
-        result = await this.$API.category.getAttrInfoList(value);
-      } else {
-        // 请求汇总(一级二级三级请求)
-        result
-      } */
-
-      // console.log("result", result);
-      if (result.code === 200) {
-        /*    if (!id) {
-          // this.attrsList = result.data;
-          // 触发父组件传过来的自定义事件
-          this.$emit("change-category", result.data);
-        } else {
-          this.category[`category${id}List`] = result.data;
-        } */
-        this.category[`category${id}List`] = result.data;
-      } else {
-        this.$message.error(`获取数据失败~`);
-      }
+    category3IdChange(category3Id) {
+      // 三级分类分类改变要请求数据,但是数据更新的方法在另外的组件中,所以先只更新store中的三级分类ID
+      // 直接触发mutations,进行修改state中的category3Id
+      this["category/SET_CATEGORY3_ID"](category3Id);
     },
   },
   mounted() {
-    this.publicGetCategory(1);
+    // 使用了命名空间 在store中写了属性 namespaced为true，引入和使用的时候加上模块的路径
+    this["category/getCategory1List"]();
   },
 };
 </script>

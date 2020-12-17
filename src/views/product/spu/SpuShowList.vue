@@ -96,6 +96,8 @@
   因为数据是在spushowlist组件中，并且分页也在，所以更新数据的方法放在此组件中
   请求数据需要admin/product/1/3?category3Id=61
 */
+import { mapState } from "vuex";
+
 export default {
   name: "SpuShowList",
   data() {
@@ -105,16 +107,42 @@ export default {
       total: 0,
       spuList: [], // spuList展示当前页的数据
 
-      category: {
-        category1Id: "",
-        category2Id: "",
-        category3Id: "",
-      },
+      // category: {
+      //   category1Id: "",
+      //   category2Id: "",
+      //   category3Id: "",
+      // },
       loading: false, // 是否正在发送请求
       isSkuListInfo: false,
       spuSkuList: [], // 某spu下的sku列表
       spuName: "", //保存当前spu的名称
     };
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
+  watch: {
+    // 监视三个分类id,可以监视对象中的属性
+    "category.category3Id": {
+      handler(category3Id) {
+        if (!category3Id) return;
+        // 三级Id有值 就发送请求数据
+        this.getSpuInfoList();
+      },
+      immediate: true, // 一上来就触发获取请求数据
+    },
+    "category.category2Id"(category2Id) {
+      if (!category2Id) return;
+      // 清空属性列表数据
+      this.clearAttrsList();
+    },
+    "category.category1Id"(category1Id) {
+      if (!category1Id) return;
+      // 清空属性列表数据
+      this.clearAttrsList();
+    },
   },
   methods: {
     // 点击获取spu下的sku列表
@@ -135,15 +163,15 @@ export default {
     async delSpu(spuId) {
       const result = await this.$API.spu.deleteSpu(spuId);
       if (result.code === 200) {
-        this.getSpuInfoList(this.category);
+        this.getSpuInfoList();
       } else {
         this.$message.error(result.message);
       }
     },
-    async getSpuInfoList(category) {
+    async getSpuInfoList() {
       this.loading = true;
       // category是Category传过来的参数
-      this.category = category;
+      // this.category = category;
       // 若三级分类改变,则发送请求获取对应数据
       const result = await this.$API.spu.getSpuList(
         this.page,
@@ -162,34 +190,34 @@ export default {
     clearAttrsList() {
       this.spuList = [];
       // 清完数组,category也是要清下的
-      this.category = {
-        category1Id: "",
-        category2Id: "",
-        category3Id: "",
-      };
+      // this.category = {
+      //   category1Id: "",
+      //   category2Id: "",
+      //   category3Id: "",
+      // };
     },
     // 页面显示条数改变
     handleSizeChange(size) {
       this.limit = size;
       // 重新发送请求
-      this.getSpuInfoList(this.category);
+      this.getSpuInfoList();
     },
     // 当前页改变
     handleCurrentChange(page) {
       this.page = page;
       // 重新发送请求
-      this.getSpuInfoList(this.category);
+      this.getSpuInfoList();
     },
   },
   mounted() {
     // 绑定获取当前页面的事件
-    this.$bus.$on("change", this.getSpuInfoList);
-    this.$bus.$on("clearAttrsList", this.clearAttrsList);
+    // this.$bus.$on("change", this.getSpuInfoList);
+    // this.$bus.$on("clearAttrsList", this.clearAttrsList);
   },
   beforeDestroy() {
     // 全局事件总线绑定后一定要销毁
-    this.$bus.$off("change", this.getSpuInfoList);
-    this.$bus.$off("clearAttrsList", this.clearAttrsList);
+    // this.$bus.$off("change", this.getSpuInfoList);
+    // this.$bus.$off("clearAttrsList", this.clearAttrsList);
   },
 };
 </script>
