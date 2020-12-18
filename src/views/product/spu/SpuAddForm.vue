@@ -335,7 +335,7 @@ export default {
         spuId: this.spu.id,
         spuSaleAttrValueList: [],
       });
-      //2- 添加完要清空销售属性的表单显示的数据
+      // 2- 添加完要清空销售属性的表单显示的数据
       this.spusaleAttr = "";
     },
     delSpuSaleAttr(row) {

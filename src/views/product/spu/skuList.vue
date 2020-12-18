@@ -26,9 +26,9 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="平台属性">
-        <div v-for="(attr, index) in attrInfoList" :key="index" class="attr">
+        <div v-for="attr in attrInfoList" :key="attr.id" class="attr">
           <span>{{ attr.attrName }}</span>
-          <el-select placeholder="请输入" v-model="sku.attrId">
+          <el-select placeholder="请输入" v-model="attr.attrValueId">
             <el-option
               v-for="spuAttr in attr.attrValueList"
               :key="spuAttr.attrId"
@@ -39,9 +39,9 @@
         </div>
       </el-form-item>
       <el-form-item label="销售属性">
-        <div v-for="(sale, index) in saleAttrList" :key="index" class="attr">
+        <div v-for="sale in saleAttrList" :key="sale.id" class="attr">
           <span>{{ sale.saleAttrName }}</span>
-          <el-select placeholder="请输入" v-model="sku.saleAttrId">
+          <el-select placeholder="请输入" v-model="sale.saleAttrId">
             <el-option
               v-for="spuSale in sale.spuSaleAttrValueList"
               :key="spuSale.id"

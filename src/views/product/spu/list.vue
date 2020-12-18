@@ -13,10 +13,10 @@
     <!-- spu添加的页面 -->
     <SpuAddForm
       v-if="!isShowSpuList && !isShowSku"
-      @updShowSpuList="updShowSpuList"
       :spu="item"
-      :isAdd="isAdd"
+      @updShowSpuList="updShowSpuList"
       @updShowList="updShowList"
+      :isAdd="isAdd"
     />
   </div>
 </template>
@@ -64,6 +64,7 @@ export default {
       });
     },
     updIsShowSku(spuItem) {
+      debugger;
       this.isShowSku = true;
       this.isShowSpuList = false;
       this.isAdd = false;
