@@ -16,6 +16,7 @@
       :spu="item"
       @updShowSpuList="updShowSpuList"
       @updShowList="updShowList"
+      @cancelShow="cancelShow"
       :isAdd="isAdd"
     />
   </div>
@@ -26,6 +27,7 @@ import Category from "@/components/Category/category";
 import SpuShowList from "./spuShowList";
 import SpuAddForm from "./spuAddForm";
 import SkuList from "./skuList";
+import { mapMutations } from "vuex";
 
 export default {
   name: "SpuList",
@@ -45,6 +47,7 @@ export default {
     SkuList,
   },
   methods: {
+    ...mapMutations(["category/RESET_CATEGORY_ID"]),
     updShowSpuList(flag, row, isAdd) {
       this.isShowSpuList = flag;
       this.isShowSku = false;
@@ -54,22 +57,30 @@ export default {
         this.isAdd = isAdd;
       }
     },
-    updShowList(category3Id) {
+    updShowList() {
       this.isShowSpuList = true;
       this.isShowSku = false;
       this.isAdd = false;
       // 等组件渲染完成就发送请求
-      this.$nextTick(() => {
+      /*   this.$nextTick(() => {
         this.$bus.$emit("change", { category3Id });
-      });
+      }); */
     },
     updIsShowSku(spuItem) {
-      debugger;
       this.isShowSku = true;
       this.isShowSpuList = false;
       this.isAdd = false;
       this.spuItem = spuItem;
     },
+    cancelShow() {
+      this.isShowSku = false;
+      this.isShowSpuList = true;
+    },
+  },
+  /* 在spu组件卸载的时候,将categoryId清空,防止跳到下一个页面(路由地址不一样的组件)时,发送请求 */
+  beforeDestroy() {
+    // console.log(this.$store);
+    this["category/RESET_CATEGORY_ID"]();
   },
 };
 </script>

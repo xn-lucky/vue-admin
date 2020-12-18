@@ -37,6 +37,8 @@ import { hasBtnPermission } from './utils/permission'
 // 引入包含所有接口请求函数模块的API对象
 import * as API from '@/api'
 
+console.log('API', API)
+
 // 引入准备全局注册的组件
 import HintButton from '@/components/HintButton'
 import CategorySelector from '@/components/CategorySelector'
@@ -70,9 +72,9 @@ Vue.prototype.$BASE_API = process.env.VUE_APP_BASE_API
 Vue.config.productionTip = false
 
 new Vue({
-  beforeCreate() {
-    Vue.prototype.$bus = this
-  },
+  /*  beforeCreate() {
+     Vue.prototype.$bus = this
+   }, */
   el: '#app',
   router,
   store,

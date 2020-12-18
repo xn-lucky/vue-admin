@@ -144,7 +144,7 @@
 
 <script>
 import Category from "@/components/Category/category";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "AttrList",
@@ -195,6 +195,7 @@ export default {
     Category,
   },
   methods: {
+    ...mapMutations(["category/RESET_CATEGORY_ID"]),
     async delAttrValueList(row, index) {
       // console.log("attrsList", this.attrsList);
       // console.log("delete", row.id, index);
@@ -303,6 +304,9 @@ export default {
     // 全局事件总线, 一定要做收尾工作,否则会出现绑定多个相同事件
     // this.$bus.$off("change", this.getAttrsInfoList);
     // this.$bus.$off("clearAttrsList", this.clearAttrsList);
+    /* 在attr组件卸载的时候,将categoryId清空,防止跳到下一个页面(路由地址不一样的组件)时,发送请求 */
+    // this.$store.commit("/category/RESET_CATEGORY_ID");
+    this["category/RESET_CATEGORY_ID"]();
   },
 };
 </script>

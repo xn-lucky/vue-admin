@@ -14,7 +14,6 @@ const getDefaultState = () => {
 }
 
 const state = getDefaultState()
-
 const mutations = {
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
@@ -37,7 +36,7 @@ const mutations = {
 }
 
 const actions = {
-  /* 
+  /*
   异步登陆
   */
   login({ commit }, userInfo) {
@@ -54,7 +53,7 @@ const actions = {
     })
   },
 
-  /* 
+  /*
   异步获取用户信息
   */
   getInfo({ commit }) {
@@ -86,7 +85,7 @@ const actions = {
     })
   },
 
-  /* 
+  /*
   退出登陆
   */
   logout({ commit }) {
@@ -102,11 +101,11 @@ const actions = {
     })
   },
 
-  /* 
+  /*
   删除token与重置状态
   */
   async resetToken({ commit }) {
-    /* 
+    /*
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')

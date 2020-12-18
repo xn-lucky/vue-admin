@@ -134,12 +134,10 @@ export default {
       immediate: true, // 一上来就触发获取请求数据
     },
     "category.category2Id"(category2Id) {
-      if (!category2Id) return;
       // 清空属性列表数据
       this.clearAttrsList();
     },
     "category.category1Id"(category1Id) {
-      if (!category1Id) return;
       // 清空属性列表数据
       this.clearAttrsList();
     },

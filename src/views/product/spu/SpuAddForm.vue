@@ -131,9 +131,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="save">保存</el-button>
-        <el-button @click="$emit('updShowList', spu.category3Id)"
-          >取消</el-button
-        ></el-form-item
+        <el-button @click="$emit('updShowList')">取消</el-button></el-form-item
       >
     </el-form>
   </el-card>
@@ -260,7 +258,7 @@ export default {
           // console.log(result);
           // 4- 保存成功后跳转页面并重新查询数据
           if (result.code === 200) {
-            this.$emit("updShowList", this.spu.category3Id);
+            this.$emit("updShowList");
           } else {
             this.$message.error(result.message);
           }
