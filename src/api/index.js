@@ -26,8 +26,8 @@ const modules = pathKeys.reduce((modules, modulePath) => {
   }
   return modules
 }, {})
+// 3- 最后将modules默认暴露出去,但是其他引入的地方也要对应修改,因为暴露方式不一样了
 
-// console.log(Object.assign({}, modules))
 
 
 
